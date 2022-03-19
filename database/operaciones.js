@@ -1,6 +1,12 @@
 const mysql = require('mysql')
 
 
+const readEmisor = (connection,callback) => {
+    connection.query(`SELECT * FROM emisor`,(err,res)=>{
+        if (err) throw err
+        callback(res)
+    })
+}
 const readContacto = (connection,callback) => {
     connection.query(`SELECT * FROM contacto`,(err,res)=>{
         if (err) throw err
@@ -20,6 +26,22 @@ const insertContacto = (connection,datos,callback) => {
     })
 }
 
+const readMensaje = (connection,callback)=>{
+    const query = `SELECT * FROM mensaje`
+  
+    connection.query(query,(err,res)=>{
+        if(err) throw err
+        callback(res)
+    })
+}
+const readMensajeByID = (connection,id,callback)=>{
+    const query = `SELECT * FROM mensaje where numeroCelular='${id}'`
+  
+    connection.query(query,(err,res)=>{
+        if(err) throw err
+        callback(res)
+    })
+}
 const insertMensaje = (connection,datos,callback)=>{
     const query = `INSERT INTO mensaje (numeroCelular,fecha,texto,EntradaSalida,Estado) VALUES (?,NOW(),?,?,?)`
     var insertQuery = mysql.format(query,[
@@ -42,5 +64,5 @@ const updateMensaje = (connection,estado,callback) => {
     })
 }
 
-module.exports = {readContacto,insertContacto,insertMensaje,updateMensaje}
+module.exports = {readContacto,insertContacto,insertMensaje,updateMensaje, readMensaje,readEmisor, readMensajeByID}
 

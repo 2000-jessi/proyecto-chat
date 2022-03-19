@@ -1,19 +1,21 @@
 //Importamos el framework de express
 const express  = require('express')
+const cors = require('cors')
 const app = express()
-const {readContacto,insertContacto, updateMensaje,insertMensaje} = require('./database/operaciones')
+const {readContacto,insertContacto, updateMensaje,insertMensaje,readEmisor, readMensaje, readMensajeByID} = require('./database/operaciones')
 const mysql = require('mysql')
 
 const connectionBd = mysql.createConnection({
     host: 'localhost',
     database: 'whatsappcliente',
     user: 'root',
-    password: 'musegreenday',
+    password: 'root',
     insecureAuth: true
 })
 
 //Middleware
 app.use(express.json())
+app.use(cors())
 app.use(express.static('./public'))
 
 //Defininmos el puerto
@@ -26,6 +28,11 @@ connectionBd.connect((err)=>{
 })
 
 //Peticion hacia la API
+app.get("/emisor",(req,res)=>{
+    readEmisor(connectionBd,response=>{
+        res.json({response})
+    })
+})
 app.get("/contactos",(req,res)=>{
     readContacto(connectionBd,response=>{
         res.json({response})
@@ -45,6 +52,18 @@ app.post("/mensaje",(req,res)=>{
         res.status(200).json(response)
     })
 })
+app.get("/mensaje",(req,res)=>{
+    readMensaje(connectionBd,response=>{
+        res.status(200).json(response)
+    })
+})
+app.get("/mensaje/:id",(req,res)=>{
+    const datos = req.params.id
+    readMensajeByID(connectionBd,datos,response=>{
+        res.status(200).json(response)
+    })
+})
+
 
 app.patch("/mensaje",(req,res)=>{
     const estado = req.body.Estado
@@ -52,3 +71,4 @@ app.patch("/mensaje",(req,res)=>{
         res.status(200).json(response)
     })
 })
+ 
